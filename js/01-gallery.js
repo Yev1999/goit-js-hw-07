@@ -25,22 +25,30 @@ let instance = basicLightbox;
 
 const onGalleryClick = (e) => {
     e.preventDefault();
+    if (e.target.nodeName !== "IMG") {
+        return;
+      }
+
+    const closeModal = (e) => {
+        console.log(e);
+        if (e.key === 'Escape') {
+            instance.close();
+        }
+    };
     const img = e.target;
     const imgURL = img.dataset.source;
-    const resultImage = basicLightbox.create(`
-        <img src="${imgURL}" />
-     `);
+    const resultImage = basicLightbox.create(`<img src="${imgURL}" />`,
+        {onShow: (instance) => {
+            document.addEventListener('keydown', closeModal);
+        },
+        onClose: () => {
+            document.removeEventListener('keydown', closeModal);
+        }
+        });
      instance = resultImage;
      resultImage.show();
 }
 gallery.addEventListener('click', onGalleryClick);
-
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        instance.visible() ? instance.close() : null;
-    }
-});
 
 
 
